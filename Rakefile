@@ -2,8 +2,8 @@ $GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
 $GTK_LIBS = `pkg-config --libs gtk+-2.0`
 
 task :default do
-  sh %{gcc -fPIC -c test.c -o test.o #{$GTK_CFLAGS}}
-  sh %{gcc -shared -Wl,-soname,libtest.so -o libtest.so test.o #{$GTK_LIBS}}
+  sh %{gcc -fPIC -c ml_helpers.c -o ml_helpers.o #{$GTK_CFLAGS}}
+  sh %{gcc -shared -Wl,-soname,libpolygtk.so -o libpolygtk.so ml_helpers.o #{$GTK_LIBS}}
 end
 
 task :clean do

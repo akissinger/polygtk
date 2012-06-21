@@ -1,1 +1,3 @@
 isaplib.heap
+*.so
+*.o
