@@ -1,18 +1,27 @@
 use "gtk_base.ML";
 
 open GTK
+open GTKCallbacks
 
-fun print_hello _ = TextIO.print "hello\n"
+fun print_my_label cb = let
+	val sender = cb_get_sender cb
+in TextIO.print ("button clicked: " ^ gtk_button_get_label sender ^ "\n")
+end
 
 fun main () = let
   val _ = gtk_init (0,0)
   val win = gtk_window_new 0
-  val _ = g_signal_connect (win, "delete-event", print_hello)
-  val _ = g_signal_connect (win, "destroy", (fn _ => gtk_main_quit ()))
-  val btn = gtk_button_new_with_label "test"
-  val _ = g_signal_connect (btn, "clicked", print_hello)
-  val _ = gtk_container_add (win,btn)
-  val _ = gtk_widget_show btn
-  val _ = gtk_widget_show win
-in gtk_main ()
+  val vbox = gtk_vbox_new (false,0)
+  val btn1 = gtk_button_new_with_label "sam"
+  val btn2 = gtk_button_new_with_label "widges"
+in (
+  g_signal_connect (win, "destroy", (fn _ => gtk_main_quit ()));
+  g_signal_connect (btn1, "clicked", print_my_label);
+  g_signal_connect (btn2, "clicked", print_my_label);
+  gtk_container_add (win,vbox);
+  gtk_container_add (vbox,btn1);
+  gtk_container_add (vbox,btn2);
+  map gtk_widget_show [btn1,btn2,vbox,win];
+  gtk_main ();
+())
 end

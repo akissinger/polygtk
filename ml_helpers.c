@@ -21,16 +21,16 @@ typedef struct callback_list callback_list;
 static GMutex *cbs_lock;
 static callback_list *cbs = 0;
 
-void initialize_callbacks() {
+void cb_init() {
   cbs_lock = g_mutex_new();
 }
 
-void free_callback(callback *cb) {
+void cb_free(callback *cb) {
   free(cb->params);
   free(cb);
 }
 
-void push_callback(callback *cb) {
+void cb_push(callback *cb) {
   g_mutex_lock(cbs_lock);
   
   callback_list *head = malloc(sizeof(callback_list));
@@ -41,7 +41,7 @@ void push_callback(callback *cb) {
   g_mutex_unlock(cbs_lock);
 }
 
-void pop_callback(int *fname, callback **cb) {
+void cb_pop(int *fname, callback **cb) {
   g_mutex_lock(cbs_lock);
   
   if (cbs != 0) {
@@ -58,6 +58,10 @@ void pop_callback(int *fname, callback **cb) {
   g_mutex_unlock(cbs_lock);
 }
 
+gpointer cb_get_sender(callback *cb) {
+  return cb->sender;
+}
+
 static int schedule_cb0(gpointer sender, gpointer data) {
   int name = *((int*)data);
   
@@ -67,7 +71,7 @@ static int schedule_cb0(gpointer sender, gpointer data) {
   cb->params = 0;
   cb->n_params = 0;
   
-  push_callback(cb);
+  cb_push(cb);
   return 0;
 }
 
@@ -81,7 +85,7 @@ static int schedule_cb1(gpointer sender, gpointer p0, gpointer data) {
   cb->params[0] = p0;
   cb->n_params = 1;
   
-  push_callback(cb);
+  cb_push(cb);
   return 0;
 }
 

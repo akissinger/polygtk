@@ -15,24 +15,24 @@ struct
 local
   open GTKBase
   open CInterface
-    
+in
   val ml_signal_connect = call3 (load_sym libpolygtk "ml_signal_connect")
                                 (POINTER,STRING,INT) INT
                                 
   val cbtab = Unsynchronized.ref CBName.NTab.empty
   val d_thread = Unsynchronized.ref NONE
   
-  val initialize_callbacks = call0 (load_sym libpolygtk "initialize_callbacks") () VOID
-  (*val push_callback = call1 (load_sym libpolygtk "push_callback") INT VOID*)
-  val pop_callback  = call2ret2 (load_sym libpolygtk "pop_callback") () (INT,POINTER)
-  val free_callback = call1 (load_sym libpolygtk "free_callback") POINTER VOID
+  val cb_init = call0 (load_sym libpolygtk "cb_init") () VOID
+  fun cb_pop () = (fn(f,c)=>(f,CB c)) (call2ret2 (load_sym libpolygtk "cb_pop") () (INT,POINTER) ())
+  fun cb_get_sender (CB cb) = call1 (load_sym libpolygtk "cb_get_sender") POINTER POINTER cb
+  fun cb_free (CB cb) = call1 (load_sym libpolygtk "cb_free") POINTER VOID cb
   
   fun dispatch () =
-    case pop_callback () of (~1,_) => () | (n,cb) =>
+    case cb_pop () of (~1,_) => () | (n,cb) =>
       let
         val f = CBName.NTab.get (!cbtab) (CBName.mk n)
-        val () = f (CB cb)
-        val () = free_callback cb
+        val () = f cb
+        val () = cb_free cb
       in dispatch ()
       end
   
@@ -40,7 +40,6 @@ local
     dispatch ();
     OS.Process.sleep (Time.fromMilliseconds 50);
     dispatch_loop (); ())
-in
   
   fun kill_dispatch_loop () =
     case !d_thread of SOME t => (Thread.interrupt t; d_thread := NONE)
@@ -50,7 +49,7 @@ in
     case !d_thread
       of SOME _ => (kill_dispatch_loop (); start_dispatch_loop ())
        | NONE   => (
-           initialize_callbacks ();
+           cb_init ();
            (d_thread := SOME (Thread.fork (dispatch_loop,[])))
          )
   
@@ -89,14 +88,11 @@ in
   val gtk_init = call2 (load_sym libgtk "gtk_init") (INT,INT) VOID
   val gtk_window_new = call1 (load_sym libgtk "gtk_window_new") INT POINTER
   val gtk_widget_show = call1 (load_sym libgtk "gtk_widget_show") POINTER VOID
+  val gtk_button_new_with_label = call1 (load_sym libgtk "gtk_button_new_with_label") STRING POINTER
+  val gtk_button_get_label = call1 (load_sym libgtk "gtk_button_get_label") POINTER STRING
+  val gtk_container_add = call2 (load_sym libgtk "gtk_container_add") (POINTER,POINTER) VOID
+  val gtk_vbox_new = call2 (load_sym libgtk "gtk_vbox_new") (BOOL,INT) POINTER
   
-  val gtk_button_new_with_label =
-    call1 (load_sym libgtk "gtk_button_new_with_label")
-    STRING POINTER
-    
-  val gtk_container_add =
-    call2 (load_sym libgtk "gtk_container_add")
-    (POINTER,POINTER) VOID
 end
 
 end
