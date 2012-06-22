@@ -1,7 +1,7 @@
 PolyML.SaveState.loadState "isaplib.heap";
 
 
-structure GTKBase =
+structure GTKLibs =
 struct
   val libpolygtk = CInterface.load_lib "libpolygtk.so"
   val libgtk = CInterface.load_lib "libgtk-x11-2.0.so"
@@ -13,7 +13,7 @@ struct
   datatype callback = CB of CInterface.vol
 
 local
-  open GTKBase
+  open GTKLibs
   open CInterface
 in
   val ml_signal_connect = call3 (load_sym libpolygtk "ml_signal_connect")
@@ -68,7 +68,7 @@ structure GTK =
 struct
 
 local
-  open GTKBase
+  open GTKLibs
   open GTKCallbacks
   open CInterface
 in
