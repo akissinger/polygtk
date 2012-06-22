@@ -44,10 +44,11 @@ ENUMS = [
   'GtkWindowPosition',
   'GtkWindowType',
   'GtkSortType',
-  'GtkDragResult']
+  'GtkDragResult',
+  'GtkEntryIconPosition']
 
 def recognize_type(str)
-  is_ptr = str.match(/^G(t|d)k\w* \*|^gpointer/) != nil
+  is_ptr = str.match(/^(const )?G(t|d)k\w* \*|^gpointer/) != nil
   
   if is_ptr
     return ["POINTER", str.match(/\*\*/) != nil]
@@ -65,7 +66,7 @@ def recognize_type(str)
       return ["UINT",is_out]
     elsif str.match(/^gboolean/)
       return ["BOOL",is_out]
-    elsif str.match(/^(const)? g?char */)
+    elsif str.match(/^(const )?g?char */)
       return ["STRING", str.match(/\*\*/) != nil]
     elsif str.match(/^void/)
       return ["VOID",is_out]
@@ -77,12 +78,12 @@ def recognize_type(str)
   end
 end
 
+force = false
+header = ARGV[0]
+
 if ARGV[0] == '-f'
   force = true
   header = ARGV[1]
-else
-  force = false
-  header = ARGV[0]
 end
 
 struct_name = header[0,header.length-2]
@@ -108,6 +109,8 @@ struct
 
 }
 
+$UNREC = 0
+
 f.each_line do |ln|
   parts = ln.match(/^(.*?)\s*(\w+)\s*\((.*)\);\s*$/)
   
@@ -117,12 +120,11 @@ f.each_line do |ln|
     type = recognize_type(parts[1])[0]
     name = parts[2]
     args = parts[3].split(',').map{|a| recognize_type(a.strip)}
-    
-    if type[0] != nil and args.all?{|a|a[1] != nil}
+    if type != nil and args.all?{|a|a[1] != nil}
       # partition by the second argument and project it out
-      inargs,outargs = (args.partition {|a| !a[1]}).each{|as| as.map!{|a|a[0]}}
-      # out.puts inargs.inspect
-      # out.puts outargs.inspect
+      inargs,outargs = args.partition {|a| !a[1]}
+      inargs.map!{|a|a[0]}
+      outargs.map!{|a|a[0]}
       
       if outargs.empty?
         out.puts %{    val #{name} = call#{inargs.length}}
@@ -137,6 +139,7 @@ f.each_line do |ln|
       out.puts "    (* !!!! WARNING: unrecognized type !!!! *)"
       out.puts "    (* #{[type,name,args].inspect} *)"
       out.puts "    (* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! *)"
+      $UNREC+=1
     end
     out.puts
   end
@@ -146,6 +149,9 @@ out.puts %{  end
 end
 }
 
-
 out.close()
 f.close()
+
+if $UNREC
+  puts "WARNING: there were #{$UNREC} unrecognized types"
+end
