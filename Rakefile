@@ -60,14 +60,15 @@ task :run => [:default] do
   if ENV['example'] == nil
     puts
     puts 'Usage: rake run example=XXX'
-    puts '  where XXX is a file in examples/, without the ML extension.'
+    puts '  where XXX is one of:'
+    Dir['*/e_*.ML'].each {|e| puts '    ' + e[11,e.length-14]}
     puts
   else
     ml = %{
       OS.FileSys.chDir "src/";
       use "gtk_base.ML";
       OS.FileSys.chDir "../examples/";
-      use "#{ENV['example']}.ML";
+      use "e_#{ENV['example']}.ML";
       main(); }
     sh %{echo '#{ml}' | LD_LIBRARY_PATH=#{Dir.pwd}:$LD_LIBRARY_PATH poly}
   end
