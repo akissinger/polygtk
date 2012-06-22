@@ -62,7 +62,10 @@ in
   
 end
   
-end
+end;
+
+
+use "bindings/GtkButton.ML";
 
 
 structure GTK =
@@ -89,10 +92,14 @@ in
   val gtk_init = call2 (load_sym libgtk "gtk_init") (INT,INT) VOID
   val gtk_window_new = call1 (load_sym libgtk "gtk_window_new") INT POINTER
   val gtk_widget_show = call1 (load_sym libgtk "gtk_widget_show") POINTER VOID
-  val gtk_button_new_with_label = call1 (load_sym libgtk "gtk_button_new_with_label") STRING POINTER
-  val gtk_button_get_label = call1 (load_sym libgtk "gtk_button_get_label") POINTER STRING
   val gtk_container_add = call2 (load_sym libgtk "gtk_container_add") (POINTER,POINTER) VOID
   val gtk_vbox_new = call2 (load_sym libgtk "gtk_vbox_new") (BOOL,INT) POINTER
+  
+  
+  open GtkButton
+  
+  (*val gtk_button_new_with_label = call1 (load_sym libgtk "gtk_button_new_with_label") STRING POINTER
+  val gtk_button_get_label = call1 (load_sym libgtk "gtk_button_get_label") POINTER STRING*)
   
 end
 
