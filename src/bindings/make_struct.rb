@@ -120,7 +120,7 @@ f.each_line do |ln|
     type = recognize_type(parts[1])[0]
     name = parts[2]
     args = parts[3].split(',').map{|a| recognize_type(a.strip)}
-    if type != nil and args.all?{|a|a[1] != nil}
+    if type != nil and args.all?{|a|a[0] != nil}
       # partition by the second argument and project it out
       inargs,outargs = args.partition {|a| !a[1]}
       inargs.map!{|a|a[0]}
@@ -153,5 +153,5 @@ out.close()
 f.close()
 
 if $UNREC
-  puts "WARNING: there were #{$UNREC} unrecognized types"
+  puts "WARNING: #{$UNREC} function(s) ignored because of unrecognized types"
 end

@@ -66,7 +66,7 @@ end;
 
 
 use "bindings/GtkButton.ML";
-
+use "bindings/GtkEntry.ML";
 
 structure GTK =
 struct
@@ -97,6 +97,7 @@ in
   
   
   open GtkButton
+  open GtkEntry
   
   (*val gtk_button_new_with_label = call1 (load_sym libgtk "gtk_button_new_with_label") STRING POINTER
   val gtk_button_get_label = call1 (load_sym libgtk "gtk_button_get_label") POINTER STRING*)

@@ -72,9 +72,9 @@ struct
       (POINTER,BOOL) VOID
 
     (* void gtk_entry_set_invisible_char (GtkEntry *entry, gunichar ch); *)
-    val gtk_entry_set_invisible_char = call2
-      (load_sym libgtk "gtk_entry_set_invisible_char")
-      (POINTER,) VOID
+    (* !!!! WARNING: unrecognized type !!!! *)
+    (* ["VOID", "gtk_entry_set_invisible_char", [["POINTER", false], [nil, false]]] *)
+    (* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! *)
 
     (* void gtk_entry_unset_invisible_char (GtkEntry *entry); *)
     val gtk_entry_unset_invisible_char = call1
@@ -257,9 +257,9 @@ struct
       (POINTER,INT,STRING) VOID
 
     (* void gtk_entry_set_icon_from_gicon (GtkEntry *entry, GtkEntryIconPosition icon_pos, GIcon *icon); *)
-    val gtk_entry_set_icon_from_gicon = call3
-      (load_sym libgtk "gtk_entry_set_icon_from_gicon")
-      (POINTER,INT,) VOID
+    (* !!!! WARNING: unrecognized type !!!! *)
+    (* ["VOID", "gtk_entry_set_icon_from_gicon", [["POINTER", false], ["INT", false], [nil, false]]] *)
+    (* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! *)
 
     (* GtkImageType gtk_entry_get_icon_storage_type (GtkEntry *entry, GtkEntryIconPosition icon_pos); *)
     (* !!!! WARNING: unrecognized type !!!! *)
@@ -332,9 +332,9 @@ struct
       (POINTER,INT) STRING
 
     (* void gtk_entry_set_icon_drag_source (GtkEntry *entry, GtkEntryIconPosition icon_pos, GtkTargetList *target_list, GdkDragAction actions); *)
-    val gtk_entry_set_icon_drag_source = call4
-      (load_sym libgtk "gtk_entry_set_icon_drag_source")
-      (POINTER,INT,POINTER,) VOID
+    (* !!!! WARNING: unrecognized type !!!! *)
+    (* ["VOID", "gtk_entry_set_icon_drag_source", [["POINTER", false], ["INT", false], ["POINTER", false], [nil, false]]] *)
+    (* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! *)
 
     (* gint gtk_entry_get_current_icon_drag_source (GtkEntry *entry); *)
     val gtk_entry_get_current_icon_drag_source = call1
