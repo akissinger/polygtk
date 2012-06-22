@@ -1,5 +1,3 @@
-use "gtk_base.ML";
-
 open GTK
 open GTKCallbacks
 

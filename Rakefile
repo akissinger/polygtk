@@ -5,7 +5,7 @@ $GTK_LIBS = `pkg-config --libs gtk+-2.0`
 
 task :config do
   do_config = true
-  if File.exist?('config/config.rb')
+  if File.exist?('config.rb')
     ans = Readline.readline('config.rb exists, overwrite? [yN] ')
     do_config = ans[0,1].downcase == 'y'
   end
@@ -15,19 +15,19 @@ task :config do
     isaplib_home = '../isaplib/' if isaplib_home == ''
     isaplib_home = File.expand_path(isaplib_home)
     
-    File.open('config/config.rb','w') do |f|
+    File.open('config.rb','w') do |f|
       f.puts("$ISAPLIB_HOME = '#{isaplib_home}'")
     end
   end
 end
 
 task :loadconfig do
-  Rake::Task["config"].invoke unless File.exist?('config/config.rb')
-  require 'config/config.rb'
+  Rake::Task["config"].invoke unless File.exist?('config.rb')
+  require 'config.rb'
 end
 
 task :mlconfig => [:loadconfig] do
-  File.open('config/config.ML','w') do |f|
+  File.open('src/config.ML','w') do |f|
     f.puts %{
     structure Config_ =
     struct
@@ -55,6 +55,23 @@ file 'libpolygtk.so' => ['src/ml_helpers.c'] do
 end
 
 task :default => [:loadconfig,:mlconfig,:isaplib_heap,'libpolygtk.so']
+
+task :run => [:default] do
+  if ENV['example'] == nil
+    puts
+    puts 'Usage: rake run example=XXX'
+    puts '  where XXX is a file in examples/, without the ML extension.'
+    puts
+  else
+    ml = %{
+      OS.FileSys.chDir "src/";
+      use "gtk_base.ML";
+      OS.FileSys.chDir "../examples/";
+      use "#{ENV['example']}.ML";
+      main(); }
+    sh %{echo '#{ml}' | LD_LIBRARY_PATH=#{Dir.pwd}:$LD_LIBRARY_PATH poly}
+  end
+end
 
 task :clean do
   rm_f Dir['*.o','*.so','config.ML']
