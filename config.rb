@@ -1,1 +1,0 @@
-$ISAPLIB_HOME='../isaplib/'
