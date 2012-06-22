@@ -1,4 +1,4 @@
 *.so
 *.o
-config.rb
-config.ML
+config/config.rb
+config/config.ML
