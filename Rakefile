@@ -32,7 +32,7 @@ task :mlconfig => [:loadconfig] do
     struct
       val ISAPLIB_HOME = "#{$ISAPLIB_HOME}"
     end
-    %}
+    }
   end
 end
 

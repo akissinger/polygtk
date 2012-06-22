@@ -1,4 +1,5 @@
-PolyML.SaveState.loadState "isaplib.heap";
+use "config.ML";
+PolyML.SaveState.loadState (Config_.ISAPLIB_HOME ^ "/heaps/all.polyml-heap");
 
 
 structure GTKLibs =
